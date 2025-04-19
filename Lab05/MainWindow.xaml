@@ -1,0 +1,25 @@
+﻿<Window x:Class="Lab05.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Lab05"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid Margin="10">
+        <StackPanel>
+            <TextBlock Text="Gestión de Clientes" FontSize="20" FontWeight="Bold" Margin="0 0 0 10"/>
+
+            <WrapPanel Margin="0 0 0 10">
+                <Button x:Name="btnInsertCliente" Content="Insertar Cliente" Width="120" Margin="5" Click="btnInsertCliente_Click"/>
+                <Button x:Name="btnDeleteCliente" Content="Eliminar seleccionado" Width="150" Margin="5" Click="btnDeleteCliente_Click"/>
+            </WrapPanel>
+
+            <DataGrid x:Name="dgClientes"
+                      AutoGenerateColumns="True"
+                      Height="350"
+                      IsReadOnly="True"
+                      MouseDoubleClick="dgClientes_MouseDoubleClick"/>
+        </StackPanel>
+    </Grid>
+</Window>
