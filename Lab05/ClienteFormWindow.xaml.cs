@@ -23,7 +23,6 @@ namespace Lab05
     {
         private readonly string connectionString = "Data Source=LAPTOP-DELL;Initial Catalog=Neptuno;User ID=sa;Password=Tecsup00;TrustServerCertificate=True;";
         public bool EsEdicion { get; set; } = false;
-
         public Cliente ClienteSeleccionado { get; set; }
 
         public ClienteFormWindow(Cliente cliente = null)
@@ -53,38 +52,62 @@ namespace Lab05
             txtFax.Text = c.Fax;
         }
 
-        private void BtnGuardar_Click(object sender, RoutedEventArgs e)
+        private bool ClienteExiste(string idCliente)
         {
             using SqlConnection conn = new SqlConnection(connectionString);
-            SqlCommand cmd;
-
-            if (!EsEdicion)
-            {
-                cmd = new SqlCommand("USP_InsertCliente", conn);
-                cmd.Parameters.AddWithValue("@idCliente", txtId.Text);
-            }
-            else
-            {
-                cmd = new SqlCommand("USP_UpdateCliente", conn);
-                cmd.Parameters.AddWithValue("@idCliente", txtId.Text);
-            }
-
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue("@NombreCompañia", txtCompania.Text);
-            cmd.Parameters.AddWithValue("@NombreContacto", txtContacto.Text);
-            cmd.Parameters.AddWithValue("@CargoContacto", txtCargo.Text);
-            cmd.Parameters.AddWithValue("@Direccion", txtDireccion.Text);
-            cmd.Parameters.AddWithValue("@Ciudad", txtCiudad.Text);
-            cmd.Parameters.AddWithValue("@Region", txtRegion.Text);
-            cmd.Parameters.AddWithValue("@CodPostal", txtCodPostal.Text);
-            cmd.Parameters.AddWithValue("@Pais", txtPais.Text);
-            cmd.Parameters.AddWithValue("@Telefono", txtTelefono.Text);
-            cmd.Parameters.AddWithValue("@Fax", txtFax.Text);
+            using SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM clientes WHERE idCliente = @idCliente", conn);
+            cmd.Parameters.AddWithValue("@idCliente", idCliente);
 
             conn.Open();
-            cmd.ExecuteNonQuery();
-            MessageBox.Show("Cliente guardado correctamente");
-            this.DialogResult = true;
+            int count = (int)cmd.ExecuteScalar();
+            return count > 0;
+        }
+
+        private void BtnGuardar_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (!EsEdicion && ClienteExiste(txtId.Text))
+                {
+                    MessageBox.Show("Ya existe un cliente con ese ID.");
+                    return;
+                }
+
+                using SqlConnection conn = new SqlConnection(connectionString);
+                SqlCommand cmd;
+
+                if (!EsEdicion)
+                {
+                    cmd = new SqlCommand("USP_InsertCliente", conn);
+                    cmd.Parameters.AddWithValue("@idCliente", txtId.Text);
+                }
+                else
+                {
+                    cmd = new SqlCommand("USP_UpdateCliente", conn);
+                    cmd.Parameters.AddWithValue("@idCliente", txtId.Text);
+                }
+
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@NombreCompañia", txtCompania.Text);
+                cmd.Parameters.AddWithValue("@NombreContacto", txtContacto.Text);
+                cmd.Parameters.AddWithValue("@CargoContacto", txtCargo.Text);
+                cmd.Parameters.AddWithValue("@Direccion", txtDireccion.Text);
+                cmd.Parameters.AddWithValue("@Ciudad", txtCiudad.Text);
+                cmd.Parameters.AddWithValue("@Region", txtRegion.Text);
+                cmd.Parameters.AddWithValue("@CodPostal", txtCodPostal.Text);
+                cmd.Parameters.AddWithValue("@Pais", txtPais.Text);
+                cmd.Parameters.AddWithValue("@Telefono", txtTelefono.Text);
+                cmd.Parameters.AddWithValue("@Fax", txtFax.Text);
+
+                conn.Open();
+                cmd.ExecuteNonQuery();
+                MessageBox.Show("Cliente guardado correctamente.");
+                this.DialogResult = true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al guardar el cliente: " + ex.Message);
+            }
         }
     }
 }

@@ -28,27 +28,39 @@ namespace Lab05
 
         private void CargarClientes()
         {
-            using SqlConnection conn = new SqlConnection(connectionString);
-            using SqlCommand cmd = new SqlCommand("USP_ListarClientes", conn);
-
-            conn.Open();
-            SqlDataReader reader = cmd.ExecuteReader();
-            List<Cliente> clientes = new List<Cliente>();
-
-            while (reader.Read())
+            try
             {
-                clientes.Add(new Cliente
-                {
-                    idCliente = reader.GetString(0),
-                    NombreCompañia = reader.GetString(1),
-                    NombreContacto = reader.GetString(2),
-                    Ciudad = reader.GetString(3),
-                    Pais = reader.GetString(4),
-                    Telefono = reader.GetString(5)
-                });
-            }
+                using SqlConnection conn = new SqlConnection(connectionString);
+                using SqlCommand cmd = new SqlCommand("USP_ListarClientes", conn);
 
-            dgClientes.ItemsSource = clientes;
+                conn.Open();
+                SqlDataReader reader = cmd.ExecuteReader();
+                List<Cliente> clientes = new List<Cliente>();
+
+                while (reader.Read())
+                {
+                    clientes.Add(new Cliente
+                    {
+                        idCliente = reader.GetString(reader.GetOrdinal("idCliente")),
+                        NombreCompañia = reader.GetString(reader.GetOrdinal("NombreCompañia")),
+                        NombreContacto = reader.GetString(reader.GetOrdinal("NombreContacto")),
+                        CargoContacto = reader.GetString(reader.GetOrdinal("CargoContacto")),
+                        Direccion = reader.GetString(reader.GetOrdinal("Direccion")),
+                        Ciudad = reader.GetString(reader.GetOrdinal("Ciudad")),
+                        Region = reader.GetString(reader.GetOrdinal("Region")),
+                        CodPostal = reader.GetString(reader.GetOrdinal("CodPostal")),
+                        Pais = reader.GetString(reader.GetOrdinal("Pais")),
+                        Telefono = reader.GetString(reader.GetOrdinal("Telefono")),
+                        Fax = reader.GetString(reader.GetOrdinal("Fax"))
+                    });
+                }
+
+                dgClientes.ItemsSource = clientes;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al cargar clientes: " + ex.Message);
+            }
         }
 
         private void btnInsertCliente_Click(object sender, RoutedEventArgs e)
@@ -67,16 +79,23 @@ namespace Lab05
                 var confirm = MessageBox.Show($"¿Deseas eliminar al cliente {cliente.NombreCompañia}?", "Confirmación", MessageBoxButton.YesNo);
                 if (confirm == MessageBoxResult.Yes)
                 {
-                    using SqlConnection conn = new SqlConnection(connectionString);
-                    using SqlCommand cmd = new SqlCommand("USP_DeleteClienteLogical", conn);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@idCliente", cliente.idCliente);
+                    try
+                    {
+                        using SqlConnection conn = new SqlConnection(connectionString);
+                        using SqlCommand cmd = new SqlCommand("USP_DeleteClienteLogical", conn);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@idCliente", cliente.idCliente);
 
-                    conn.Open();
-                    cmd.ExecuteNonQuery();
+                        conn.Open();
+                        cmd.ExecuteNonQuery();
 
-                    MessageBox.Show("Cliente eliminado (lógicamente).");
-                    CargarClientes();
+                        MessageBox.Show("Cliente eliminado (lógicamente).");
+                        CargarClientes();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error al eliminar cliente: " + ex.Message);
+                    }
                 }
             }
         }

@@ -5,9 +5,14 @@ BEGIN
         idCliente,
         NombreCompañia,
         NombreContacto,
+        CargoContacto,
+        Direccion,
         Ciudad,
+        Region,
+        CodPostal,
         Pais,
-        Telefono
+        Telefono,
+        Fax
     FROM clientes
     WHERE activo = 1
 END

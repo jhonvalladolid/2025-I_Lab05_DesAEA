@@ -15,11 +15,13 @@
                 <Button x:Name="btnDeleteCliente" Content="Eliminar seleccionado" Width="150" Margin="5" Click="btnDeleteCliente_Click"/>
             </WrapPanel>
 
-            <DataGrid x:Name="dgClientes"
-                      AutoGenerateColumns="True"
-                      Height="350"
-                      IsReadOnly="True"
-                      MouseDoubleClick="dgClientes_MouseDoubleClick"/>
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                <DataGrid x:Name="dgClientes"
+                          AutoGenerateColumns="True"
+                          IsReadOnly="True"
+                          MinWidth="950"
+                          MouseDoubleClick="dgClientes_MouseDoubleClick"/>
+            </ScrollViewer>
         </StackPanel>
     </Grid>
 </Window>
